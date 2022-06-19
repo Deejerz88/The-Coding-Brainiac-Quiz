@@ -314,7 +314,7 @@ const addQuestion = () => {
 //request initials and store high score
 const recordScore = () => {
   const myScore = currScore.textContent;
-  const highScores = JSON.parse(localStorage.getItem("highScores"));
+  let highScores = JSON.parse(localStorage.getItem("highScores"));
   const form = document.createElement("form");
   const initials = document.createElement("input");
   const submit = document.createElement("input");

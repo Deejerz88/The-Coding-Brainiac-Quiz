@@ -188,7 +188,14 @@ start.classList.add("choice");
 const showScores = () => {
   quiz.innerHTML = "";
   const highScores = JSON.parse(localStorage.getItem("highScores"));
+  
   const h2 = document.createElement("h2");
+  if (!highScores) {
+    h2.textContent = "No scores yet. This is your chance!"
+    quiz.append(h2)
+    quiz.append(start)
+    return
+  }
   h2.textContent = "Highscores";
   quiz.append(h2);
   const entries = Object.entries(highScores);

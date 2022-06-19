@@ -22,6 +22,11 @@ const lightGreen = "#d5f4e6";
 let darkGreen = "#618685";
 const blue = "#80ced6";
 const yellow = "#fefbd8";
+const start = document.createElement("button");
+const aStyl = alrt.style;
+const nStyl = nav.style;
+const cStyl = container.style;
+const stStyl = start.style
 
 let questions = [
   ["HTML consists of a series of __________.", "elements"],
@@ -66,7 +71,7 @@ document.body.style.backgroundColor = yellow;
 title.style.color = darkGreen;
 title.style.textShadow = "0 0 0 black";
 
-const nStyl = nav.style;
+
 nStyl.display = "flex";
 nStyl.justifyContent = "space-between";
 nStyl.borderBottom = `1px solid ${darkGreen}`;
@@ -81,7 +86,6 @@ viewScores.style.color = darkGreen;
 viewScores.onmouseover = () => (viewScores.style.color = "#9fa9a3");
 viewScores.onmouseout = () => (viewScores.style.color = darkGreen);
 
-const cStyl = container.style;
 cStyl.display = "flex";
 cStyl.flexFlow = "column wrap";
 cStyl.alignItems = "center";
@@ -98,7 +102,6 @@ qStyl.backgroundColor = lightGreen;
 qStyl.color = darkGreen;
 qStyl.boxShadow = "0 0 10px grey";
 
-const aStyl = alrt.style;
 alrt.width = "100px";
 aStyl.borderRadius = "6px";
 aStyl.padding = "10px";
@@ -111,45 +114,49 @@ aStyl.color = "grey";
 
 time.textContent = timeLeft;
 
+start.textContent = "Start Quiz";
+stStyl.backgroundColor = blue;
+stStyl.borderRadius = "6px";
+stStyl.boxShadow = "0 3px 3px grey";
+stStyl.marginTop = '15px'
+start.classList.add("choice");
+
 const showScores = () => {
   quiz.innerHTML = "";
   const highScores = JSON.parse(localStorage.getItem("highScores"));
-  // console.log(highScores);
   const h2 = document.createElement("h2");
   h2.textContent = "Highscores";
-  const keys = Object.keys(highScores);
-  keys.sort().reverse();
   quiz.append(h2);
-  keys.forEach((prop, i) => {
-    const thisScore = highScores[prop];
+  const entries = Object.entries(highScores)
+  entries.sort((a, b) => { return b[1] - a[1] })
+  entries.forEach((entry, i) => {
+    const thisScore = entry[1];
+    const thisName = entry[0]
     const span = document.createElement("span");
-    span.textContent = `${i + 1}. ${prop}: ${thisScore}`;
+    span.textContent = `${i + 1}. ${thisName}: ${thisScore}`;
     if (i % 2 === 0) span.style.backgroundColor = blue;
     span.style.padding = "5px";
     span.style.fontWeight = "bold";
+    start.onclick = () => location.reload()
     quiz.append(span);
+    quiz.append(start)
   });
 };
 
 viewScores.onclick = showScores;
 
 const startPrompt = () => {
+  quiz.innerHTML = ''
   const intro = document.createElement("h3");
   intro.textContent = "Time to test your coding knowledge!";
   quiz.append(intro);
   const scoring = document.createElement("p");
   scoring.innerHTML =
     "<b><u>Scoring:</u></b><br><b>Correct Answer:</b> + 500 points<br><b>Wrong Answer:</b> - 15 seconds<br><b>Time:</b> 100 points per remaining second";
-  quiz.append(scoring);
-  const start = document.createElement("button");
-  start.textContent = "Start Quiz";
   start.onclick = startQuiz;
-  start.style.backgroundColor = blue;
-  start.style.borderRadius = "6px";
-  start.style.boxShadow = "0 3px 3px grey";
-  start.classList.add("choice");
-  addListeners();
+  quiz.append(scoring);
   quiz.append(start);
+  addListeners();
 };
 
 const startQuiz = () => {
@@ -168,6 +175,8 @@ const startQuiz = () => {
   timeBonus = timeLeft * 100;
   currScore.textContent = score + timeBonus;
 };
+
+
 
 const startTimer = () => {
   timer = setInterval(() => {
@@ -249,6 +258,7 @@ const recordScore = () => {
   const label = document.createElement("label");
   const iStyl = initials.style;
   let sStyl = submit.style;
+
   clearInterval(timer);
   quiz.innerHTML = "";
 
@@ -293,7 +303,7 @@ const recordScore = () => {
     // console.log(highScores);
     if (!!highScores) {
       if (highScores[name] > myScore) {
-        showSummary(highScores[name])
+        showScores()
         return
       }
       highScores[name] = myScore;
@@ -303,6 +313,7 @@ const recordScore = () => {
       highScores[name] = myScore;
       localStorage.setItem("highScores", JSON.stringify(highScores));
     }
+    showScores();
   });
 };
 
@@ -366,8 +377,5 @@ const showAlert = (message, color) => {
   }, 3000);
 };
 
-const showSummary = (hs) => {
-  
-}
 
 startPrompt();

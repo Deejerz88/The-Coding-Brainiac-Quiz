@@ -4,45 +4,48 @@ const time = document.getElementById("time");
 const nav = document.body.querySelector("nav");
 const container = document.getElementById("container");
 const alrt = document.getElementById("alert");
+const viewScores = document.querySelector("a");
+const title = document.querySelector("h1");
 
-nav.style.display = "flex";
-nav.style.justifyContent = "space-between";
-nav.style.borderBottom = "1px solid black";
-nav.style.padding = "20px";
+// let randomKey;
+// let keys;
+let ind;
+let timeLeft = 100;
+let timer;
+let choices = [];
+let question;
+let answer;
+let ol;
+let score = 0;
+let fadeOut;
+let currScore;
+let timeBonus;
+const lightGreen = "#d5f4e6";
+let darkGreen = "#618685";
+const blue = "#80ced6";
+const yellow = "#fefbd8";
 
-container.style.display = "flex";
-container.style.flexFlow = "column wrap";
-container.style.alignItems = "center";
-container.style.marginTop = "20px";
-
-quiz.style.display = "flex";
-quiz.style.flexFlow = "column wrap";
-quiz.style.border = "2px solid black";
-quiz.style.borderRadius = "6px";
-quiz.style.padding = "10px";
-quiz.style.width = "500px";
-
-alrt.width = "50px";
-alrt.style.borderRadius = "3px";
-alrt.style.padding = "6px";
-alrt.style.position = "absolute";
-alrt.style.top = "0";
-alrt.style.left = "48vw";
-
-let questions = {
-  q1: ["question1", "answer1"],
-  q2: ["question2", "answer2"],
-  q3: ["question3", "answer3"],
-  q4: ["question4", "answer4"],
-  q5: ["question5", "answer5"],
-};
+let questions = [
+  ["HTML consists of a series of __________.", "elements"],
+  ["HTML is used mostly to __________ a web page", "structure"],
+  ["<!DOCTYPE html> is used ot difine a document as __________", "HTML5"],
+  [
+    "Stylesheet importing should be done in the __________ of an HTML document",
+    "head",
+  ],
+  ["#'s are used to label __________", "id's"],
+  [
+    "__________ HTML tags clearly define the its meaning to both the browser and the developor",
+    "semantic",
+  ],
+];
 let answerArr = [
-  "answer1",
-  "answer2",
-  "answer3",
-  "answer21",
-  "answer4",
-  "answer5",
+  "elements",
+  "id's",
+  "head",
+  "semantic",
+  "HTML5",
+  "structure",
   "answer6",
   "answer8",
   "answer9",
@@ -59,20 +62,71 @@ let answerArr = [
   "answer20",
 ];
 
-let randomKey;
-let keys;
-let timeLeft = 100;
-let timer;
-let choices = [];
-let question;
-let answer;
-let ol;
-let score = 0;
-let fadeOut;
-let currScore;
-let timeBonus;
+document.body.style.margin = "0";
+document.body.style.backgroundColor = yellow;
+
+title.style.color = darkGreen;
+title.style.textShadow = "0 0 0 black";
+
+nav.style.display = "flex";
+nav.style.justifyContent = "space-between";
+nav.style.borderBottom = `1px solid ${darkGreen}`;
+nav.style.padding = "20px";
+nav.style.backgroundColor = lightGreen;
+nav.style.color = darkGreen;
+nav.style.fontSize = "18pt";
+
+viewScores.style.textDecoration = "none";
+viewScores.style.color = darkGreen;
+viewScores.onmouseover = () => (viewScores.style.color = "#9fa9a3");
+viewScores.onmouseout = () => (viewScores.style.color = darkGreen);
+
+container.style.display = "flex";
+container.style.flexFlow = "column wrap";
+container.style.alignItems = "center";
+container.style.marginTop = "20px";
+
+quiz.style.display = "flex";
+quiz.style.flexFlow = "column wrap";
+quiz.style.border = `2px solid ${darkGreen}`;
+quiz.style.borderRadius = "6px";
+quiz.style.padding = "10px";
+quiz.style.width = "500px";
+quiz.style.backgroundColor = lightGreen;
+quiz.style.color = darkGreen;
+quiz.style.boxShadow = "0 0 10px grey";
+
+alrt.width = "100px";
+alrt.style.borderRadius = "3px";
+alrt.style.padding = "10px";
+alrt.style.position = "absolute";
+alrt.style.top = "25px";
+alrt.style.left = "47vw";
+alrt.style.boxShadow = "0 0 5px grey";
+alrt.style.display = 'none'
 
 time.textContent = timeLeft;
+
+const showScores = () => {
+  quiz.innerHTML = "";
+  let highScores = JSON.parse(localStorage.getItem("highScores"));
+  console.log(highScores);
+  const h2 = document.createElement("h2");
+  h2.textContent = "Highscores";
+  const keys = Object.keys(highScores);
+  keys.sort().reverse();
+  let ol = document.createElement("ol");
+  keys.forEach((prop) => {
+    let thisScore = highScores[prop];
+    let li = document.createElement("li");
+    li.textContent = `${prop}: ${thisScore}`;
+    ol.append(li);
+  });
+  quiz.append(h2);
+  quiz.append(ol);
+};
+
+viewScores.onclick = showScores;
 
 const startPrompt = () => {
   const intro = document.createElement("h3");
@@ -85,6 +139,9 @@ const startPrompt = () => {
   let start = document.createElement("button");
   start.textContent = "Start Quiz";
   start.onclick = startQuiz;
+  start.style.backgroundColor = blue;
+  start.style.borderRadius = "3px";
+  start.style.boxShadow = "0 3px 3px grey";
   quiz.append(start);
 };
 
@@ -92,10 +149,14 @@ const startQuiz = () => {
   startTimer();
   generateQuestion();
   let scoreCard = document.createElement("section");
-  scoreCard.innerHTML = `<h3>Score:</h3> <span id=currScore>${score}</span>`;
+  scoreCard.innerHTML = `<h1>Score:</h1> <span id=currScore>${score}</span>`;
   scoreCard.style.marginTop = "20px";
+  scoreCard.style.color = darkGreen;
+  scoreCard.style.textShadow = "0 0 0 grey";
+  scoreCard.style.textAlign = "center";
   container.append(scoreCard);
   currScore = document.getElementById("currScore");
+  currScore.style.fontSize = "18pt";
   timeBonus = timeLeft * 100;
   currScore.textContent = score + timeBonus;
 };
@@ -118,7 +179,8 @@ const generateQuestion = () => {
   answer = questArr[1];
   choices = [];
 
-  delete questions[keys[randomKey]];
+  questions.splice(ind, 1);
+  console.log(questions);
 
   for (let i = 0; i < 4; i++) {
     let index =
@@ -134,9 +196,11 @@ const generateQuestion = () => {
 };
 
 const randomQuestion = (questions) => {
-  keys = Object.keys(questions);
-  randomKey = (keys.length * Math.random()) << 0;
-  return questions[keys[randomKey]];
+  // keys = Object.keys(questions);
+  // randomKey = (keys.length * Math.random()) << 0;
+  // return questions[keys[randomKey]];
+  ind = (questions.length * Math.random()) << 0;
+  return questions[ind];
 };
 
 const addQuestion = () => {
@@ -158,7 +222,7 @@ const addQuestion = () => {
 
     btn.classList.add("choice");
     btn.style.borderRadius = "3px";
-    btn.style.backgroundColor = "lightblue";
+    btn.style.backgroundColor = blue;
     btn.textContent = `${i + 1}. ${choice}`;
 
     li.append(btn);
@@ -170,12 +234,14 @@ const addQuestion = () => {
 const addListeners = () => {
   ol.addEventListener("mouseover", (e) => {
     if (e.target.classList[0] !== "choice") return;
-    e.target.style.backgroundColor = "teal";
+    e.target.style.backgroundColor = darkGreen;
+    e.target.style.color = "white";
   });
 
   ol.addEventListener("mouseout", (e) => {
     if (e.target.classList[0] !== "choice") return;
-    e.target.style.backgroundColor = "lightblue";
+    e.target.style.backgroundColor = blue;
+    e.target.style.color = "black";
   });
 
   ol.addEventListener("click", (e) => {
@@ -199,7 +265,7 @@ const addListeners = () => {
     fadeOut = setTimeout(() => {
       alrt.style.display = "none";
     }, 3000);
-    if (keys.length - 1 > 0) generateQuestion();
+    if (questions.length - 1 > 0) generateQuestion();
     else recordScore();
   });
 };
@@ -227,6 +293,21 @@ const recordScore = () => {
   form.append(label);
   form.append(initials);
   form.append(submit);
+  submit.addEventListener("click", (e) => {
+    e.preventDefault();
+    let name = document.getElementById("initials").value;
+    let myScore = currScore.textContent;
+    let highScores = JSON.parse(localStorage.getItem("highScores"));
+    console.log(highScores);
+    if (!!highScores) {
+      highScores[name] = myScore;
+      localStorage.setItem("highScores", JSON.stringify(highScores));
+    } else {
+      highScores = {};
+      highScores[name] = myScore;
+      localStorage.setItem("highScores", JSON.stringify(highScores));
+    }
+  });
 };
 
 startPrompt();

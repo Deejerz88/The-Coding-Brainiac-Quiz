@@ -12,7 +12,7 @@ Questions order, choice order, and 'incorrect choices' are randomized every time
 
 A brief notification will pop up to notify whether you got the previous answer correct.
 
-https://deejerz88.github.io/The-Coding-Braniac-Quiz/
+https://deejerz88.github.io/The-Coding-Brainiac-Quiz
 
 <img src='./assets/images/Braniac.png'>
 

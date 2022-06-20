@@ -458,7 +458,7 @@ const showAlert = (message, color) => {
   aStyl.backgroundColor = `light${color}`;
   alrt.textContent = message;
   aStyl.display = "";
-  if (!!fadeOut) clearInterval(fadeOut);
+  if (!!fadeOut) clearTimeout(fadeOut);
   fadeOut = setTimeout(() => {
     aStyl.display = "none";
   }, 3000);

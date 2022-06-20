@@ -370,6 +370,7 @@ const recordScore = () => {
     e.preventDefault();
     const name = document.getElementById("initials").value;
     if (!name) { //prevent blank name entry
+      alrt.width = '250px'
       showAlert("Please Enter Your Initials", "pink");
       recordScore();
       return;
